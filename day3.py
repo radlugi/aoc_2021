@@ -1,22 +1,18 @@
 import numpy as np
 
-input = []
+arr = []
 for line in open("input/day3"):
-    list = []
-    for number in line:
-        if not number == "\n":
-            list.append(int(number))
-    input.append(list)
-input = np.array(input).T
+    row = [int(number) for number in line if not number == "\n"]
+    arr.append(row)
+arr = np.array(arr).T
 
 
-def part1(input):
-    gammaRate = []
-    epsilonRate = []
-    for bits in input:
-        count1 = np.count_nonzero(bits)
-        count0 = len(bits) - count1
-        if count0 > count1:
+def part1(arr):
+    gammaRate, epsilonRate = [], []
+    for row in arr:
+        ones = np.count_nonzero(row)
+        zeros = len(row) - ones
+        if zeros > ones:
             gammaRate.append(0)
             epsilonRate.append(1)
         else:
@@ -27,43 +23,39 @@ def part1(input):
     print(gammaRate * epsilonRate)
 
 
-def part2(input):
-    cinput = input
-    ogr = []
-    crs = []
-    for i in range(len(input)):
-        r, c = input.shape
-        if r == 1:
-            ogr = input.T
+def part2(arr):
+    ogr, crs = [], []
+    arr_copy = arr
+    for i in range(len(arr)):
+        if arr.shape[-1] == 1:
+            ogr = arr.T
             ogr = ogr[0].tolist()
             break
-        count1 = np.count_nonzero(input[i])
-        count0 = input[i].size - count1
-        if count1 >= count0:
+        ones = np.count_nonzero(arr[i])
+        zeros = arr[i].size - ones
+        if ones >= zeros:
             ogr.append(1)
-            input = np.delete(input, np.where(input[i] == 0), 1)
+            arr = np.delete(arr, np.where(arr[i] == 0), 1)
         else:
             ogr.append(0)
-            input = np.delete(input, np.where(input[i] == 1), 1)
-    input = cinput
-    for i in range(len(input)):
-        c, r = input.shape
-        if r == 1:
-            crs = input.T
+            arr = np.delete(arr, np.where(arr[i] == 1), 1)
+    for i in range(len(arr_copy)):
+        if arr_copy.shape[-1] == 1:
+            crs = arr_copy.T
             crs = crs[0].tolist()
             break
-        count1 = np.count_nonzero(input[i])
-        count0 = input[i].size - count1
-        if count1 >= count0:
+        ones = np.count_nonzero(arr_copy[i])
+        zeros = arr_copy[i].size - ones
+        if ones >= zeros:
             crs.append(0)
-            input = np.delete(input, np.where(input[i] == 1), 1)
+            arr_copy = np.delete(arr_copy, np.where(arr_copy[i] == 1), 1)
         else:
             crs.append(1)
-            input = np.delete(input, np.where(input[i] == 0), 1)
+            arr_copy = np.delete(arr_copy, np.where(arr_copy[i] == 0), 1)
     ogr = int("".join(map(str, ogr)), 2)
     crs = int("".join(map(str, crs)), 2)
     print(ogr * crs)
 
 
-part1(input)
-part2(input)
+part1(arr)
+part2(arr)
